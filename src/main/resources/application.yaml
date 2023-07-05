@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: "geocoder api"
+google:
+    apiKey: "123"
+    connectionTimeout: 30
+    readTimeout: 30
+    maxRetries: 3
