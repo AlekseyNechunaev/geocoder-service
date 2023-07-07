@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
-import ru.nechunaev.geocoderservice.configuration.GoogleApiContextProperties;
+import ru.nechunaev.geocoderservice.configuration.YandexApiWebClientProperties;
 
-@EnableConfigurationProperties(GoogleApiContextProperties.class)
+@EnableConfigurationProperties(YandexApiWebClientProperties.class)
 @SpringBootApplication
 @EnableCaching
 public class GeocoderServiceApplication {

@@ -1,8 +1,8 @@
 spring:
   application:
     name: "geocoder api"
-google:
-    apiKey: "123"
+yandex:
+    baseUrl: "https://geocode-maps.yandex.ru/1.x/"
+    apiKey: "81dd5c2a-a82b-47ab-9cbf-2a4f90117f1c"
     connectionTimeout: 30
     readTimeout: 30
-    maxRetries: 3
