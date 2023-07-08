@@ -18,58 +18,61 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 @Service
 public class YandexMapApiServiceImpl implements YandexMapApiService {
 
     private static final Logger log = LoggerFactory.getLogger(YandexMapApiServiceImpl.class);
     private final WebClient client;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper mapper;
 
     @Autowired
-    public YandexMapApiServiceImpl(WebClient client, ObjectMapper objectMapper) {
+    public YandexMapApiServiceImpl(WebClient client, ObjectMapper mapper) {
         this.client = client;
-        this.objectMapper = objectMapper;
+        this.mapper = mapper;
     }
 
     @Override
-    public YandexGeocoderResult sendRequest(Map<String, String> parameters) {
-        final Predicate<HttpStatusCode> isErrorCode = httpStatusCode -> httpStatusCode.is4xxClientError() ||
-                httpStatusCode.is5xxServerError();
-        return client.get()
-                .uri( uriBuilder ->
+    public YandexGeocoderResult sendRequest(Map<String, Object> parameters) {
+        final YandexGeocoderResult geocoderResult = client.get()
+                .uri(uriBuilder ->
                         uriBuilder.queryParams(convertParametersToMultiMap(parameters))
                                 .build())
                 .retrieve()
-                .onStatus(isErrorCode,
-                        clientResponse -> {
-                    logResponse(clientResponse);
-                    return Mono.error(new YandexMapGeocoderClientException("An error occurred, the request ended " +
-                            "with the status " + clientResponse.statusCode()));
-                })
+                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse.bodyToMono(String.class)
+                        .flatMap(error -> {
+                                    logResponse(error);
+                                    return Mono.error(
+                                            new YandexMapGeocoderClientException("the request to the external " +
+                                                    "system failed with an error"));
+                                }
+                        ))
                 .bodyToMono(YandexGeocoderResult.class)
-                .doOnSuccess(this::logResponse)
                 .block();
+        logResponse(geocoderResult);
+        return geocoderResult;
     }
 
-    private MultiValueMap<String, String> convertParametersToMultiMap(Map<String, String> parameters) {
+    private MultiValueMap<String, String> convertParametersToMultiMap(Map<String, Object> parameters) {
         final Map<String, List<String>> multiValueParameters = new HashMap<>(parameters.size());
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             var key = entry.getKey();
-            var value = Collections.singletonList(parameters.get(key));
+            var value = Collections.singletonList(parameters.get(key).toString());
             multiValueParameters.put(key, value);
         }
         return new LinkedMultiValueMap<>(multiValueParameters);
     }
 
     private void logResponse(Object response) {
-        String logObjectInfo;
+        if (response == null) {
+            log.info("response body is empty");
+            return;
+        }
         try {
-            logObjectInfo = objectMapper.writeValueAsString(response);
+            final String convertedResponse = mapper.writeValueAsString(response);
+            log.info("response body {}", convertedResponse);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        log.info("response {}", logObjectInfo);
     }
 }

@@ -6,11 +6,11 @@ import ru.nechunaev.geocoderservice.validation.annotation.Longitude;
 
 public class CoordinatesDto {
     @NotNull
-    @Latitude
+    @Latitude(message = "the value must be in the range >= -90 to <=90")
     private Double latitude;
 
     @NotNull
-    @Longitude
+    @Longitude(message = "the value must be in the range >= -180 to <= 180")
     private Double longitude;
 
     public Double getLatitude() {

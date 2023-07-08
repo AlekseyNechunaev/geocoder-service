@@ -29,8 +29,9 @@ public class LoggingFilter extends OncePerRequestFilter {
         long endTime = System.currentTimeMillis() - startTime;
         String requestBody = getStringValue(requestWrapper.getContentAsByteArray(),
                 request.getCharacterEncoding());
+        log.info("request encoding: {}", request.getCharacterEncoding());
         String responseBody = getStringValue(responseWrapper.getContentAsByteArray(),
-                response.getCharacterEncoding());
+                request.getCharacterEncoding());
         log.info(
                 "FINISHED PROCESSING : METHOD={}; REQUESTURI={}; REQUEST PAYLOAD={}; RESPONSE CODE={}; RESPONSE={};" +
                         " TIM TAKEN={}",

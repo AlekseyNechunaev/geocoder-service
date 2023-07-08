@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface YandexMapApiService {
 
-    YandexGeocoderResult sendRequest(Map<String, String> parameters);
+    YandexGeocoderResult sendRequest(Map<String, Object> parameters);
 
 }

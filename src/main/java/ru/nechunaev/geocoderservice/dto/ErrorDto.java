@@ -1,9 +1,13 @@
-package ru.nechunaev.geocoderservice.dto.yandex;
+package ru.nechunaev.geocoderservice.dto;
 
-public class GeocodeApiError {
+public class ErrorDto {
     private int statusCode;
-    private String error;
     private String message;
+
+    public ErrorDto(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+    }
 
     public int getStatusCode() {
         return statusCode;
@@ -11,14 +15,6 @@ public class GeocodeApiError {
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 
     public String getMessage() {
