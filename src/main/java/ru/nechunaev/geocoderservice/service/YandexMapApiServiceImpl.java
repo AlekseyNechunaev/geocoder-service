@@ -72,6 +72,7 @@ public class YandexMapApiServiceImpl implements YandexMapApiService {
             final String convertedResponse = mapper.writeValueAsString(response);
             log.info("response body {}", convertedResponse);
         } catch (JsonProcessingException e) {
+            log.error("error parsed api response body", e);
             throw new RuntimeException(e);
         }
     }
