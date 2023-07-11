@@ -4,9 +4,5 @@ services:
     build: .
     ports:
       - "8080:8080"
-    links:
-      - redis
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
+    environment:
+      API_KEY: 81dd5c2a-a82b-47ab-9cbf-2a4f90117f1c
